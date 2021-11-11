@@ -7,6 +7,9 @@
 * `nothing` represents the absence of a value. Python equivalent: `None`
 
 ## Basic sentences
+`<arg>` means the argument `arg` is required.
+`[arg]` means the argument `arg` is optional.
+
 ### `print <value>`
 Shows:
 * strings
