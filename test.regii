@@ -1,6 +1,7 @@
 print "RegII"
 print "Variable assignation statement: let x be 10"
 let x be 10
+// why does this not work?
 print x
 print "Another variable + string escapes: let hw be \"Hello, world!\""
 let hw be "Hello, world!"
@@ -20,7 +21,7 @@ decrease y by 1.5
 print y
 
 print "Expression results"
-// should set x to True
+// should set x to true
 let x be (print "Hello, world!")
 print x
 
@@ -29,3 +30,4 @@ print "Trying to print a variable that doesn't exist"
 print not_a_variable
 // "nothing" is RegII's default value for variables that don't exist and its equivalent to None in Python, nil in Objective-C/Swift/lua and null in most other languages
 print (2 + 2)
+print (y + 15)
