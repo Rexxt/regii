@@ -133,9 +133,9 @@ class RegII:
                         return False, self, lines, _i, self.TypeMismatchError(_i, line, ['int', 'float'], type(self.variables[args['name']])), return_stack
                 else:
                     return False, self, lines, _i, line, self.TypeError(_i, line, ['int', 'float'], type(self.variables[args['name']])), return_stack
-            elif re.match(f'(?P<term_a>({typeregex.number}|{typeregex.expression}))\s*\+\s*(?P<term_b>({typeregex.number}|{typeregex.expression}))', line):
+            elif re.match(sentences.builtins.add, line):
                 # addition
-                args = re.search(f'(?P<term_a>({typeregex.number}|{typeregex.expression}))\s*\+\s*(?P<term_b>({typeregex.number}|{typeregex.expression}))', line)
+                args = re.search(sentences.builtins.add, line)
                 if args['term_a'].isdigit():
                     term_a = int(args['term_a'])
                 elif args['term_a'].replace('.', '', 1).isdigit():
@@ -144,6 +144,13 @@ class RegII:
                     result = self.interpret(args['term_a'][1:-1])
                     #print(result)
                     term_a = result[6].pop() # expression result (recursive)
+                elif re.match(typeregex.name, args['term_a']):
+                    if type(self.variables[args['term_a']]) == int:
+                        term_a = int(self.variables[args['term_a']])
+                    elif type(self.variables[args['term_a']]) == float:
+                        term_a = float(self.variables[args['term_a']])
+                else:
+                    return False, self, lines, _i, line, self.TypeError(_i, line, ['int', 'float'], "undefined"), return_stack
                 
                 if args['term_b'].isdigit():
                     term_b = int(args['term_b'])
@@ -153,11 +160,18 @@ class RegII:
                     result = self.interpret(args['term_b'][1:-1])
                     #print(result)
                     term_b = result[6].pop()
+                elif re.match(typeregex.name, args['term_b']):
+                    if type(self.variables[args['term_b']]) == int:
+                        term_b = int(self.variables[args['term_b']])
+                    elif type(self.variables[args['term_b']]) == float:
+                        term_b = float(self.variables[args['term_b']])
+                else:
+                    return False, self, lines, _i, line, self.TypeError(_i, line, ['int', 'float'], "undefined"), return_stack
                 
                 return_stack.append(term_a + term_b)
-            elif re.match(f'(?P<term_a>({typeregex.number}|{typeregex.expression}))\s*-\s*(?P<term_b>({typeregex.number}|{typeregex.expression}))', line):
+            elif re.match(sentences.builtins.substract, line):
                 # substraction
-                args = re.search(f'(?P<term_a>({typeregex.number}|{typeregex.expression}))\s*-\s*(?P<term_b>({typeregex.number}|{typeregex.expression}))', line)
+                args = re.search(sentences.builtins.substract, line)
                 if args['term_a'].isdigit():
                     term_a = int(args['term_a'])
                 elif args['term_a'].replace('.', '', 1).isdigit():
@@ -166,6 +180,18 @@ class RegII:
                     result = self.interpret(args['term_a'][1:-1])
                     #print(result)
                     term_a = result[6].pop() # expression result (recursive)
+                elif re.match(typeregex.name, args['term_a']):
+                    if type(self.variables[args['term_a']]) == int:
+                        term_a = int(self.variables[args['term_a']])
+                    elif type(self.variables[args['term_a']]) == float:
+                        term_a = float(self.variables[args['term_a']])
+                elif re.match(typeregex.name, args['term_b']):
+                    if type(self.variables[args['term_b']]) == int:
+                        term_b = int(self.variables[args['term_b']])
+                    elif type(self.variables[args['term_b']]) == float:
+                        term_b = float(self.variables[args['term_b']])
+                else:
+                    return False, self, lines, _i, line, self.TypeError(_i, line, ['int', 'float'], "undefined"), return_stack
                 
                 if args['term_b'].isdigit():
                     term_b = int(args['term_b'])
@@ -175,11 +201,18 @@ class RegII:
                     result = self.interpret(args['term_b'][1:-1])
                     #print(result)
                     term_b = result[6].pop()
+                elif re.match(typeregex.name, args['term_b']):
+                    if type(self.variables[args['term_b']]) == int:
+                        term_b = int(self.variables[args['term_b']])
+                    elif type(self.variables[args['term_b']]) == float:
+                        term_b = float(self.variables[args['term_b']])
+                else:
+                    return False, self, lines, _i, line, self.TypeError(_i, line, ['int', 'float'], "undefined"), return_stack
                 
                 return_stack.append(term_a - term_b)
-            elif re.match(f'(?P<term_a>({typeregex.number}|{typeregex.expression}))\s*/\s*(?P<term_b>({typeregex.number}|{typeregex.expression}))', line):
+            elif re.match(sentences.builtins.divide, line):
                 # division
-                args = re.search(f'(?P<term_a>({typeregex.number}|{typeregex.expression}))\s*/\s*(?P<term_b>({typeregex.number}|{typeregex.expression}))', line)
+                args = re.search(sentences.builtins.divide, line)
                 if args['term_a'].isdigit():
                     term_a = int(args['term_a'])
                 elif args['term_a'].replace('.', '', 1).isdigit():
@@ -188,6 +221,13 @@ class RegII:
                     result = self.interpret(args['term_a'][1:-1])
                     #print(result)
                     term_a = result[6].pop() # expression result (recursive)
+                elif re.match(typeregex.name, args['term_a']):
+                    if type(self.variables[args['term_a']]) == int:
+                        term_a = int(self.variables[args['term_a']])
+                    elif type(self.variables[args['term_a']]) == float:
+                        term_a = float(self.variables[args['term_a']])
+                else:
+                    return False, self, lines, _i, line, self.TypeError(_i, line, ['int', 'float'], "undefined"), return_stack
                 
                 if args['term_b'].isdigit():
                     term_b = int(args['term_b'])
@@ -197,11 +237,18 @@ class RegII:
                     result = self.interpret(args['term_b'][1:-1])
                     #print(result)
                     term_b = result[6].pop()
-                
+                elif re.match(typeregex.name, args['term_b']):
+                    if type(self.variables[args['term_b']]) == int:
+                        term_b = int(self.variables[args['term_b']])
+                    elif type(self.variables[args['term_b']]) == float:
+                        term_b = float(self.variables[args['term_b']])
+                else:
+                    return False, self, lines, _i, line, self.TypeError(_i, line, ['int', 'float'], "undefined"), return_stack
+
                 return_stack.append(term_a / term_b)
-            elif re.match(f'(?P<term_a>({typeregex.number}|{typeregex.expression}))\s*\*\s*(?P<term_b>({typeregex.number}|{typeregex.expression}))', line):
+            elif re.match(sentences.builtins.multiply, line):
                 # multiplication
-                args = re.search(f'(?P<term_a>({typeregex.number}|{typeregex.expression}))\s*\*\s*(?P<term_b>({typeregex.number}|{typeregex.expression}))', line)
+                args = re.search(sentences.builtins.multiply, line)
                 if args['term_a'].isdigit():
                     term_a = int(args['term_a'])
                 elif args['term_a'].replace('.', '', 1).isdigit():
@@ -210,6 +257,13 @@ class RegII:
                     result = self.interpret(args['term_a'][1:-1])
                     #print(result)
                     term_a = result[6].pop() # expression result (recursive)
+                elif re.match(typeregex.name, args['term_a']):
+                    if type(self.variables[args['term_a']]) == int:
+                        term_a = int(self.variables[args['term_a']])
+                    elif type(self.variables[args['term_a']]) == float:
+                        term_a = float(self.variables[args['term_a']])
+                else:
+                    return False, self, lines, _i, line, self.TypeError(_i, line, ['int', 'float'], "undefined"), return_stack
                 
                 if args['term_b'].isdigit():
                     term_b = int(args['term_b'])
@@ -219,6 +273,13 @@ class RegII:
                     result = self.interpret(args['term_b'][1:-1])
                     #print(result)
                     term_b = result[6].pop()
+                elif re.match(typeregex.name, args['term_b']):
+                    if type(self.variables[args['term_b']]) == int:
+                        term_b = int(self.variables[args['term_b']])
+                    elif type(self.variables[args['term_b']]) == float:
+                        term_b = float(self.variables[args['term_b']])
+                else:
+                    return False, self, lines, _i, line, self.TypeError(_i, line, ['int', 'float'], "undefined"), return_stack
                 
                 return_stack.append(term_a * term_b)
             else:
