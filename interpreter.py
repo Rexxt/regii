@@ -40,10 +40,7 @@ class RegII:
         elif type(value) == float:
             return str(value)
         elif type(value) == bool:
-            if value == True:
-                return "true"
-            else:
-                return "false"
+            return typeregex.bools[value]
         elif value == None:
             return "nothing"
 
