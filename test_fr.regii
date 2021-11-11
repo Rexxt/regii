@@ -1,0 +1,20 @@
+afficher "RegII"
+afficher "Variable assignation statement: let x be 10"
+soit x 10
+afficher x
+afficher "Another variable + string escapes: let hw be \"Hello, world!\""
+soit hw "Hello, world!"
+afficher hw
+afficher "Increasing an int variable"
+augmenter x de 1
+afficher x
+afficher "Increasing a floating point variable"
+soit y 1.0
+augmenter y de 1.5
+afficher y
+afficher "Decreasing an int variable"
+diminuer x de 1
+afficher x
+afficher "Decreasing a floating point variable"
+diminuer y de 1.5
+afficher y
