@@ -63,25 +63,27 @@ class RegII:
         while _i < len(lines):
             # interpret the line
             line = lines[_i]
-            if re.match(sentences.builtins.print["str"], line):
+            #print(return_stack)
+            if re.match(sentences.builtins.print, line):
                 # print
-                args = re.search(sentences.builtins.print["str"], line)
-                print(self.process_string_escape(args['str'][1:-1])) # print string
-            elif re.match(sentences.builtins.print["num"], line):
-                # print
-                args = re.search(sentences.builtins.print["num"], line)
-                print(args['num'])
-            elif re.match(sentences.builtins.print["empty"], line):
-                # print
-                print()
-            elif re.match(sentences.builtins.print["var"], line):
-                # print
-                args = re.search(sentences.builtins.print["var"], line)
-                print(self.tostring(self.variables[args['var']] if args['var'] in self.variables else "nothing"))
-            elif re.match(sentences.builtins.print["nothing"], line):
-                # print
-                print(typeregex.nothing)
-            # TODO: refactor print to use a single regex
+                args = re.search(sentences.builtins.print, line)
+
+                if re.match(typeregex.string, args['input']):
+                    print(self.process_string_escape(args['input'][1:-1])) # print string without quotes
+                elif re.match(typeregex.number, args['input']):
+                    print(args['input'])
+                elif re.match(typeregex.boolean, args['input']):
+                    print(typeregex.bools[args['input']])
+                elif re.match(typeregex.nothing, args['input']):
+                    print(typeregex.nothing)
+                elif re.match(typeregex.expression, args['input']):
+                    result = self.interpret(args['input'][1:-1])
+                    #print(result)
+                    print(result[6].pop()) # expression result (recursive)
+                elif re.match(args['input'], typeregex.name):
+                    print(self.variables[args['input']])
+                else:
+                    return False, self, lines, _i, line, self.TypeError(_i, line, ["string", "integer", "float", "boolean", "nothing", "name", "expression"], 'undefined'), return_stack
             elif re.match(sentences.builtins.let_be, line):
                 # variable assignment (let name be value)
                 args = re.search(sentences.builtins.let_be, line)
@@ -91,10 +93,8 @@ class RegII:
                     self.variables[args['name']] = int(args['value']) # integer
                 elif args['value'].replace('.', '', 1).isdigit():
                     self.variables[args['name']] = float(args['value']) # float
-                elif args['value'] == 'true':
-                    self.variables[args['name']] = True # boolean
-                elif args['value'] == 'false':
-                    self.variables[args['name']] = False # boolean
+                elif re.match(typeregex.boolean, args['value']):
+                    self.variables[args['name']] = typeregex.bools[args['value']] # boolean
                 elif re.match(typeregex.nothing, args['value']):
                     self.variables[args['name']] = None # nothing
                 elif re.match(typeregex.name, args['value']):
@@ -105,7 +105,7 @@ class RegII:
                     self.variables[args['name']] = result[6].pop() # expression result (recursive)
                 else:
                     # unknown type error
-                    return False, self, lines, _i, self.TypeError(_i, line, ["string", "integer", "float", "boolean", "nothing", "name"], 'undefined'), return_stack
+                    return False, self, lines, _i, line, self.TypeError(_i, line, ["string", "integer", "float", "boolean", "nothing", "name"], 'undefined'), return_stack
                 # TODO: more types (list, dict, etc.)
             elif re.match(sentences.builtins.increase_by, line):
                 # variable increase (increase name by value)
@@ -117,9 +117,9 @@ class RegII:
                     elif args['value'].replace('.', '', 1).isdigit():
                         self.variables[args['name']] += float(args['value'])
                     else:
-                        return False, self, lines, _i, self.TypeMismatchError(_i, line, ['int', 'float'], type(self.variables[args['name']])), return_stack
+                        return False, self, lines, _i, line, self.TypeMismatchError(_i, line, ['int', 'float'], type(self.variables[args['name']])), return_stack
                 else:
-                    return False, self, lines, _i, self.TypeError(_i, line, ['int', 'float'], type(self.variables[args['name']])), return_stack
+                    return False, self, lines, _i, line, self.TypeError(_i, line, ['int', 'float'], type(self.variables[args['name']])), return_stack
             elif re.match(sentences.builtins.decrease_by, line):
                 # variable decrease (decrease name by value)
                 args = re.search(sentences.builtins.decrease_by, line)
@@ -132,10 +132,32 @@ class RegII:
                     else:
                         return False, self, lines, _i, self.TypeMismatchError(_i, line, ['int', 'float'], type(self.variables[args['name']])), return_stack
                 else:
-                    return False, self, lines, _i, self.TypeError(_i, line, ['int', 'float'], type(self.variables[args['name']])), return_stack
+                    return False, self, lines, _i, line, self.TypeError(_i, line, ['int', 'float'], type(self.variables[args['name']])), return_stack
+            elif re.match(f'(?P<term_a>({typeregex.number}|{typeregex.expression}))\s*\+\s*(?P<term_b>({typeregex.number}|{typeregex.expression}))', line):
+                # addition
+                args = re.search(f'(?P<term_a>({typeregex.number}|{typeregex.expression}))\s*\+\s*(?P<term_b>({typeregex.number}|{typeregex.expression}))', line)
+                if args['term_a'].isdigit():
+                    term_a = int(args['term_a'])
+                elif args['term_a'].replace('.', '', 1).isdigit():
+                    term_a = float(args['term_a'])
+                elif re.match(typeregex.expression, args['term_a']):
+                    result = self.interpret(args['term_a'][1:-1])
+                    #print(result)
+                    term_a = result[6].pop() # expression result (recursive)
+                
+                if args['term_b'].isdigit():
+                    term_b = int(args['term_b'])
+                elif args['term_b'].replace('.', '', 1).isdigit():
+                    term_b = float(args['term_b'])
+                elif re.match(typeregex.expression, args['term_b']):
+                    result = self.interpret(args['term_b'][1:-1])
+                    #print(result)
+                    term_b = result[6].pop()
+                
+                return_stack.append(term_a + term_b)
             else:
                 # print("Error: Unknown command: " + line) # temporary until we have a proper error system
-                return False, self, lines, _i, self.SentenceMatchError(_i, line)
+                return False, self, lines, _i, line, self.SentenceMatchError(_i, line), return_stack
             
             _i += 1
             

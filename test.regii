@@ -28,3 +28,4 @@ print "Trying to print a variable that doesn't exist"
 // should print "nothing"
 print not_a_variable
 // "nothing" is RegII's default value for variables that don't exist and its equivalent to None in Python, nil in Objective-C/Swift/lua and null in most other languages
+print (2 + 2)
