@@ -42,7 +42,7 @@ class RegII:
         elif type(value) == bool:
             return typeregex.bools[value]
         elif value == None:
-            return "nothing"
+            return typeregex.nothing
 
     def interpret(self, code):
         # Interpret the code
@@ -78,6 +78,9 @@ class RegII:
                 # print
                 args = re.search(sentences.builtins.print["var"], line)
                 print(self.tostring(self.variables[args['var']] if args['var'] in self.variables else "nothing"))
+            elif re.match(sentences.builtins.print["nothing"], line):
+                # print
+                print(typeregex.nothing)
             # TODO: refactor print to use a single regex
             elif re.match(sentences.builtins.let_be, line):
                 # variable assignment (let name be value)
