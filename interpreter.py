@@ -80,7 +80,7 @@ class RegII:
                     result = self.interpret(args['input'][1:-1])
                     #print(result)
                     print(result[6].pop()) # expression result (recursive)
-                elif re.match(args['input'], typeregex.name):
+                elif re.match(typeregex.name, args['input']):
                     print(self.variables[args['input']])
                 else:
                     return False, self, lines, _i, line, self.TypeError(_i, line, ["string", "integer", "float", "boolean", "nothing", "name", "expression"], 'undefined'), return_stack
