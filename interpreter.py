@@ -155,6 +155,72 @@ class RegII:
                     term_b = result[6].pop()
                 
                 return_stack.append(term_a + term_b)
+            elif re.match(f'(?P<term_a>({typeregex.number}|{typeregex.expression}))\s*-\s*(?P<term_b>({typeregex.number}|{typeregex.expression}))', line):
+                # substraction
+                args = re.search(f'(?P<term_a>({typeregex.number}|{typeregex.expression}))\s*-\s*(?P<term_b>({typeregex.number}|{typeregex.expression}))', line)
+                if args['term_a'].isdigit():
+                    term_a = int(args['term_a'])
+                elif args['term_a'].replace('.', '', 1).isdigit():
+                    term_a = float(args['term_a'])
+                elif re.match(typeregex.expression, args['term_a']):
+                    result = self.interpret(args['term_a'][1:-1])
+                    #print(result)
+                    term_a = result[6].pop() # expression result (recursive)
+                
+                if args['term_b'].isdigit():
+                    term_b = int(args['term_b'])
+                elif args['term_b'].replace('.', '', 1).isdigit():
+                    term_b = float(args['term_b'])
+                elif re.match(typeregex.expression, args['term_b']):
+                    result = self.interpret(args['term_b'][1:-1])
+                    #print(result)
+                    term_b = result[6].pop()
+                
+                return_stack.append(term_a - term_b)
+            elif re.match(f'(?P<term_a>({typeregex.number}|{typeregex.expression}))\s*/\s*(?P<term_b>({typeregex.number}|{typeregex.expression}))', line):
+                # division
+                args = re.search(f'(?P<term_a>({typeregex.number}|{typeregex.expression}))\s*/\s*(?P<term_b>({typeregex.number}|{typeregex.expression}))', line)
+                if args['term_a'].isdigit():
+                    term_a = int(args['term_a'])
+                elif args['term_a'].replace('.', '', 1).isdigit():
+                    term_a = float(args['term_a'])
+                elif re.match(typeregex.expression, args['term_a']):
+                    result = self.interpret(args['term_a'][1:-1])
+                    #print(result)
+                    term_a = result[6].pop() # expression result (recursive)
+                
+                if args['term_b'].isdigit():
+                    term_b = int(args['term_b'])
+                elif args['term_b'].replace('.', '', 1).isdigit():
+                    term_b = float(args['term_b'])
+                elif re.match(typeregex.expression, args['term_b']):
+                    result = self.interpret(args['term_b'][1:-1])
+                    #print(result)
+                    term_b = result[6].pop()
+                
+                return_stack.append(term_a / term_b)
+            elif re.match(f'(?P<term_a>({typeregex.number}|{typeregex.expression}))\s*\*\s*(?P<term_b>({typeregex.number}|{typeregex.expression}))', line):
+                # multiplication
+                args = re.search(f'(?P<term_a>({typeregex.number}|{typeregex.expression}))\s*\*\s*(?P<term_b>({typeregex.number}|{typeregex.expression}))', line)
+                if args['term_a'].isdigit():
+                    term_a = int(args['term_a'])
+                elif args['term_a'].replace('.', '', 1).isdigit():
+                    term_a = float(args['term_a'])
+                elif re.match(typeregex.expression, args['term_a']):
+                    result = self.interpret(args['term_a'][1:-1])
+                    #print(result)
+                    term_a = result[6].pop() # expression result (recursive)
+                
+                if args['term_b'].isdigit():
+                    term_b = int(args['term_b'])
+                elif args['term_b'].replace('.', '', 1).isdigit():
+                    term_b = float(args['term_b'])
+                elif re.match(typeregex.expression, args['term_b']):
+                    result = self.interpret(args['term_b'][1:-1])
+                    #print(result)
+                    term_b = result[6].pop()
+                
+                return_stack.append(term_a * term_b)
             else:
                 # print("Error: Unknown command: " + line) # temporary until we have a proper error system
                 return False, self, lines, _i, line, self.SentenceMatchError(_i, line), return_stack
