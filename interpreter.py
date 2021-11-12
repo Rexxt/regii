@@ -19,6 +19,7 @@ class RegII:
         self.__license__ = "GNU General Public License v3.0"
         self.__source__ = source
         self.variables = {}
+        self.methods = {}
 
     def SentenceMatchError(self, index, line):
         return f'RegII | SentenceMatchError ({self.__source__} : {index+1})\n    > | {line}\n    ! | Didn\'t find any matching sentence'
@@ -282,6 +283,28 @@ class RegII:
                     return False, self, lines, _i, line, self.TypeError(_i, line, ['int', 'float'], "undefined"), return_stack
                 
                 return_stack.append(term_a * term_b)
+            elif re.match(sentences.builtins.use_python, line):
+                # use python
+                args = re.search(sentences.builtins.use_python, line)
+                
+                import imp
+
+                mod = open(args['input'])
+                code = mod.read()
+
+                # set module_class to the return value of mod.module_class
+                module_class = imp.new_module(args['input']).module_class()
+                module_class.setup(self)
+
+            elif line == '':
+                # empty line
+                pass
+            elif self.methods is not None:
+                # find matching method
+                for method in self.methods:
+                    if re.match(method, line):
+                        args = re.search(method, line)
+                        return_stack.append(self.methods[method](self, args, return_stack))
             else:
                 # print("Error: Unknown command: " + line) # temporary until we have a proper error system
                 return False, self, lines, _i, line, self.SentenceMatchError(_i, line), return_stack

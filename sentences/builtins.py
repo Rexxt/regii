@@ -10,9 +10,12 @@ add = f'(?P<term_a>({typeregex.number}|{typeregex.expression}))\s*\+\s*(?P<term_
 substract = f'(?P<term_a>({typeregex.number}|{typeregex.expression}))\s*-\s*(?P<term_b>({typeregex.number}|{typeregex.expression}))'
 multiply = f'(?P<term_a>({typeregex.number}|{typeregex.expression}))\s*\*\s*(?P<term_b>({typeregex.number}|{typeregex.expression}))'
 divide = f'(?P<term_a>({typeregex.number}|{typeregex.expression}))\s*/\s*(?P<term_b>({typeregex.number}|{typeregex.expression}))'
+use_python = f'use python (?P<input>{typeregex.handled_by_function}) as (?P<name>{typeregex.handled_by_function})'
 
 # french
 """print = f'afficher (?P<input>{typeregex.handled_by_function})'
 let_be = f'soit (?P<name>{typeregex.name}) (?P<value>.*)'
 increase_by = f'augmenter (?P<name>{typeregex.name}) de (?P<value>.*)'
-decrease_by = f'diminuer (?P<name>{typeregex.name}) de (?P<value>.*)'"""
+decrease_by = f'diminuer (?P<name>{typeregex.name}) de (?P<value>.*)'
+use_python = f'utiliser python (?P<input>{typeregex.handled_by_function}) en tant que (?P<name>{typeregex.handled_by_function})'
+"""
